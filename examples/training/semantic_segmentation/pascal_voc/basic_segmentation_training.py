@@ -79,6 +79,7 @@ flags.DEFINE_float(
 )
 
 flags.DEFINE_integer("epochs", 100, "Epochs to train for")
+flags.DEFINE_integer("image_size", 224, "Image size")
 
 FLAGS = flags.FLAGS
 FLAGS(sys.argv)
@@ -99,6 +100,7 @@ except ValueError:
 print("Number of accelerators: ", strategy.num_replicas_in_sync)
 
 local_batch = FLAGS.batch_size
+img_size = FLAGS.image_size
 global_batch = local_batch * strategy.num_replicas_in_sync
 base_lr = FLAGS.initial_learning_rate * strategy.num_replicas_in_sync
 
@@ -107,8 +109,8 @@ eval_ds = load(split="sbd_eval", data_dir=None)
 
 
 def resize_image(img, cls_seg, augment=False):
-    img = tf.keras.layers.Resizing(512, 512, interpolation="nearest")(img)
-    cls_seg = tf.keras.layers.Resizing(512, 512, interpolation="nearest")(cls_seg)
+    img = tf.keras.layers.Resizing(img_size, img_size, interpolation="nearest")(img)
+    cls_seg = tf.keras.layers.Resizing(img_size, img_size, interpolation="nearest")(cls_seg)
     cls_seg = tf.cast(cls_seg, tf.uint8)
 
     inputs = {"images": img, "segmentation_masks": cls_seg}
