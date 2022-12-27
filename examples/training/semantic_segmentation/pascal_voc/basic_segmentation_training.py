@@ -140,7 +140,6 @@ train_ds = (
     .shuffle(8)
     .prefetch(tf.data.AUTOTUNE)
 )
-train_ds = train_ds.batch(global_batch, drop_remainder=True)
 
 eval_ds = eval_ds.map(lambda x: process(x), num_parallel_calls=tf.data.AUTOTUNE)
 eval_ds = eval_ds.batch(global_batch, drop_remainder=True)
