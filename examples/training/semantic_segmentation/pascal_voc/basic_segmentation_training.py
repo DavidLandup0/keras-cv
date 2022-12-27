@@ -102,7 +102,7 @@ print("Number of accelerators: ", strategy.num_replicas_in_sync)
 local_batch = FLAGS.batch_size
 img_size = FLAGS.image_size
 global_batch = local_batch * strategy.num_replicas_in_sync
-base_lr = FLAGS.initial_learning_rate * strategy.num_replicas_in_sync / 16
+base_lr = FLAGS.initial_learning_rate * global_batch / 16
 
 train_ds = load(split="sbd_train", data_dir=None)
 eval_ds = load(split="sbd_eval", data_dir=None)
