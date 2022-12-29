@@ -20,6 +20,8 @@ from tensorflow.keras import layers
 class TransformerEncoder(layers.Layer):
     """
     Transformer encoder block implementation as a Keras Layer.
+    Can be used as a general-purpose transformer encoder with `MultiHeadAttention`,
+    used by architectures such as plain Vision Transformers.
 
     Args:
         project_dim: the dimensionality of the projection of the encoder, and output of the `MultiHeadAttention`
@@ -131,3 +133,25 @@ class TransformerEncoder(layers.Layer):
         activation = config.pop("activation")
         activation = tf.keras.activations.deserialize(activation)
         return cls(activation=activation, **config)
+
+
+@tf.keras.utils.register_keras_serializable(package="keras_cv")
+class MaxViTTransformerEncoder(layers.Layer):
+    # Attention + FFN (LN + Attention + Residual + LN + MLP)
+
+    """
+        Transformer encoder block with Relative Multi-head Attention, as a Keras Layer.
+        This is a specific transformer encoder, for MaxViTs.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def call(self, input):
+        # ...
+        return input
+
+    def get_config(self):
+        # config = {"...": self....}
+        # base_config = super().get_config()
+        # return dict(list(base_config.items()) + list(config.items()))
+        return super().get_config()

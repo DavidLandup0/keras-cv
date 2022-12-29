@@ -7,9 +7,8 @@
 """
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers
 from tensorflow.keras import initializers
-
+from tensorflow.keras import layers
 
 from keras_cv.layers.mbconv import MBConvBlock
 
@@ -38,6 +37,7 @@ def generate_lookup_tensor(
     length, max_relative_position=None, clamp_out_of_range=False, dtype=tf.float32
 ):
     """Generate a one_hot lookup tensor to reindex embeddings along one dimension.
+    Based on: https://github.com/google-research/maxvit/blob/main/maxvit/models/attention_utils.py
 
     Args:
         length: the length to reindex to.
@@ -82,6 +82,7 @@ def reindex_2d_einsum_lookup(
     h_axis=None,
 ):
     """Reindex 2d relative position bias with 2 independent einsum lookups.
+    Based on: https://github.com/google-research/maxvit/blob/main/maxvit/models/attention_utils.py
 
     Args:
         relative_position_tensor: tensor of shape
@@ -412,26 +413,9 @@ class MaxViTStem(layers.Layer):
         return x
 
     def get_config(self):
-        # config = {"...": self....}
-        # base_config = super().get_config()
-        # return dict(list(base_config.items()) + list(config.items()))
-        return super().get_config()
-
-
-@tf.keras.utils.register_keras_serializable(package="keras_cv")
-class MaxViTTransformerEncoder(layers.Layer):
-    # Attention + FFN (LN + Attention + Residual + LN + MLP)
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def call(self, input):
-        # ...
-        return input
-
-    def get_config(self):
-        # config = {"...": self....}
-        # base_config = super().get_config()
-        # return dict(list(base_config.items()) + list(config.items()))
+        config = {"filters": self.filters, "kernel_size": self.kernel_size}
+        base_config = super().get_config()
+        return dict(list(base_config.items()) + list(config.items()))
         return super().get_config()
 
 
@@ -582,13 +566,15 @@ class RelativeMultiHeadAttention(layers.MultiHeadAttention):
 
     def get_config(self):
         config = super().get_config()
-        config.update({
-            "num_heads": self._num_heads,
-            "scale_ratio": self._scale_ratio,
-            "kernel_initializer": initializers.serialize(
-                self._kernel_initializer),
-            })
+        config.update(
+            {
+                "num_heads": self._num_heads,
+                "scale_ratio": self._scale_ratio,
+                "kernel_initializer": initializers.serialize(self._kernel_initializer),
+            }
+        )
         return config
+
 
 @tf.keras.utils.register_keras_serializable(package="keras_cv")
 class MaxViTBlock(layers.Layer):

@@ -23,7 +23,6 @@ from keras_cv.layers.fusedmbconv import FusedMBConvBlock
 from keras_cv.layers.maxvit_layers import GridPartitioning
 from keras_cv.layers.maxvit_layers import MaxViTBlock
 from keras_cv.layers.maxvit_layers import MaxViTStem
-from keras_cv.layers.maxvit_layers import MaxViTTransformerEncoder
 from keras_cv.layers.maxvit_layers import RelativeMultiHeadAttention
 from keras_cv.layers.maxvit_layers import UnGridPartitioning
 from keras_cv.layers.maxvit_layers import UnWindowPartitioning
